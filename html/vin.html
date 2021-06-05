@@ -1,611 +1,94 @@
-<!doctype html>
-<html lang="en-US">
+
+<html lang="en">
   <head>
-	  <title>VIN Decoder & Lookup | Vindecoderz</title>
-    <meta charset="utf-8">
-    <meta name="description" content="VIN decoder allows to get a vehicle history report with accidents, damages, odometer reading and recalls to avoid buying used vehicles with hidden problems. Free VIN Check. Free VIN Lookup." />
-    <meta name="keywords" content="VIN decoder, VIN lookup, Vehicle History Report, VIN check, VIN number structure" />
-	  <meta name="author" content="VinDecoderz.com GW LTD">
-	  <meta name="copyright" content="VinDecoderz.com GW LTD" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="/media/favicon.ico" />	
-    <link rel="canonical" href="https://www.vindecoderz.com"/>
-	  <meta name="wot-verification" content="b1d01b07f60600bfe640"/>  
-	  <meta name="norton-safeweb-site-verification" content="vry-2g4ol-b0g9aoxzc9dff10yvvcly683jyjdk5ft716kn43h78tyvjtfbokff7csexrr4zd8qq3ofpmo8qqzsx98zbc88-4w3q0afeurdzj3sa8cv6-opre6ipsqka" />
-	  <meta name="google-site-verification" content="avqOrttHdZrvCMMKxOR_wyKN7k_Vfsu1pmvcNAdXp_o" />
-	  <meta property="og:title" content="VIN decoder & lookup - Vindecoderz" />
-	  <meta property="og:description" content="Get the complete vehicle history report with owner information, prior accidents and damage." />	
-	  <meta property="og:url" content="https://www.vindecoderz.com/" />	 
-		<meta property="og:locale" content="en_US" />
-    <link rel="stylesheet" href="/css/bootstrap2.min.css">
-    <link rel="stylesheet" href="/css/custom.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  
+      <title>⛅Api Clima⛅</title>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
+      <script>
+  
+          //Obtener el documento HTML completo 
+          //una vez listo ejecutar funcion anonima
+          $(document).ready(function(){
+              //Ocultando los Alert(Rectangulos de colores)
+             $("#msg").hide();
+             $("#msg2").hide();
+  
+             //UrlBase del Servicio Web del Clima
+             var url = "https://www.metaweather.com/api/location/search/?lattlong=";
+  
+  
+              $("#PedirClima").click(function(){
+                  //Verificar si el objeto geolocation existe dentro de navigator
+                  //if("geolocation" in navigator)
+                  if (navigator.geolocation) {
+                      //En Caso de Existir Geolocation, ejecutamos la funcion getCurrentPosition, para obtener la Posicion
+                      navigator.geolocation.getCurrentPosition(showPosition);
+                      //Si se obtiene la posicion se ejecuta el metodo showPosition
+                  } else {
+                      //En Caso de error pasamos el mensaje al Alert y lo mostramos
+                      $("#msg2").append("Geolocation is not supported by this browser.");
+                      $("#msg2").show();
+                  }
+              }) 
+  
+              function showPosition(position) {
+                  $("#mensajeLatLon").remove();
+  
+                  //En caso de encontrar la posicion, se agrega y se muestra a la Alerta, la latitud y longitud
+                  $("#msg").append(`<div id="mensajeLatLon">Latitude: ${position.coords.latitude} <br> Longitude: ${position.coords.longitude}</div>`);
+                  $("#msg").show();
+  
+                  //Guardamos lat y lon, en variables
+                  var lat = position.coords.latitude;
+                  var lon = position.coords.longitude;
+  
+  
+                  //https://www.metaweather.com/api/location/search/?lattlong=position.coords.latitude,position.coords.longitude
+                  var urlFormatted = `${url}${lat},${lon}`;
+                  console.log(urlFormatted);
+  
+                  $.get(urlFormatted,function(data){
+                      //console.log(data);
+                  }).then(function(data){
+                        //Una vez se cumple la peticion GET
+                        //armamos la nueva URL para obtener el Clima                      
+                        var newUrl =`https://www.metaweather.com/api/location/${data[0].woeid}`;
+                        console.log(newUrl);
+  
+                        //Hacer peticion del clima por WOEID
+                        $.get(newUrl,function(data){
+                          //toda la info del clima    
+                          console.log(data);
+                          //Temp Promedio
+                          console.log(`La temperatura promedio es ${data.consolidated_weather[0].the_temp}°C`);
+                        })
+  
+  
+  
+                  })
+  
+                 
+                
+              }
+  
+          })
+       
+        
+      </script>
   </head>
-  <body> 
-	 	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
-      <a class="navbar-brand" href="/"><h2 style="font-size:23px;"><i class="fas fa-car">&nbsp;</i>VINDECODERZ</h2></a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div style="font-size:14px;" class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/"><i class="fa fa-home"></i>  Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/EN/car-specifications-features-performance-equipment"><i class="fas fa-tachometer-alt"></i> &nbsp;Car specs and features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/EN/car-problems-recalls-complaints"><i class="fa fa-wrench"></i> &nbsp;Car Problems and Recalls</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/EN/free-license-plate-number-lookup"><i class="fa fa-list-alt"></i> &nbsp;License Plate Lookup</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/EN/api"><i class="fa fa-cogs"></i> &nbsp;VIN decoder API</a>
-          </li>
-           <li class="nav-item">
-            <a class="nav-link" href="/EN/contact"><i class="fas fa-envelope-square"></i> &nbsp;Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/EN/sitemap"><i class="fa fa-list"></i> &nbsp;Sitemap</a>
-          </li>
-        </ul>      
-      </div>
-    </nav>    <main>
-        <div class="container">      
-          <div class="page-header"><br><br><br>     
-            <div class="row">  
-               <div class="col-sm"> 
-                  <br/>
-                   <!-- search vin -->        
-                  <script type="4407e6eb8f2967db5dc21299-text/javascript">	
-function decodeVIN() {				 
-		var vin = $.trim(document.getElementById('vin_number').value.replace(/\s/g, ""));
-		if(vin != null && vin.length == 17) {		
-			    document.getElementById('dec_btn').innerHTML = '&nbsp;Please wait...';
-			    setTimeout(1000);
-				document.location.href = 'https://www.vindecoderz.com/' + 'EN' + '/check-lookup/' + vin.toUpperCase();					
-		} else {
-			alert('ERROR: VIN number must contain 17 characters.');
-		}
-}
-
-function onChangeVin() {
-	var vin = $.trim(document.getElementById('vin_number').value.replace(/\s/g, ""));
-		if(vin != null && vin.length == 17) {		
-			document.getElementById('vin_number').classList.add("is-valid");
-		} else {
-			document.getElementById('vin_number').classList.remove("is-valid");
-		}
-}
-</script>
-<br>
-<div class="center" >	
-	 <form class="form-inline">
-   <div class="form-group" >
-		 <div class="input-group mb-3">
-  		 <input oninput="if (!window.__cfRLUnblockHandlers) return false; onChangeVin();" id="vin_number" maxlength="17" style="font-size:18px;font-weight: bold;" class="form-control" type="text" placeholder="Enter  VIN:" data-cf-modified-4407e6eb8f2967db5dc21299-="">  
-  		<div class="input-group-append">
-			 <button id="dec_btn" onclick="if (!window.__cfRLUnblockHandlers) return false; decodeVIN();" style="font-size:16px;" class="btn btn-success" type="button" data-cf-modified-4407e6eb8f2967db5dc21299-="">Decode <i class="fa fa-search-plus"></i></button>
-			 </div>
-		</div>
-		</div>
-	</form>
-</div>
-
-
-                   <br/>
-              </div>
-							<div class="col-sm center"><br/><header><h1 style="color:#158CBA">VIN decoder & Lookup</h1>							 
-								 <h2 style="color:#158CBA;font-size:14px">
-									 Get a free VIN check with our service
-								 </h2>
-								 </header>
-							</div>           
-            </div>                 
-          </div>
+  <body>
+      <h1>Bienvenido a la informacion del clima</h1>
+      <button type="button" id="PedirClima" class="btn btn-primary mb-3">Pedir Ubicacion</button>
+      <div class="alert alert-primary" role="alert" id="msg">
         </div>
-      <hr>
-       <div class="container">
-          <div class="row">          
-                 <div class="col-sm">
-                 <p class="center">                  
-               <a href="/"><img class="two" title="VINDecoderz" alt="VINDecoderz" src="/images/vin-decoderz-logo-alt.png"/></a>
-                        This is a universal VIN decoder. Every car has a unique identifier code called a VIN. This number contains vital information about the car, such as its manufacturer, year of production, the plant it was produced in, type of engine, model and more. For instance, if someone wants to buy a car, it is possible to check the VIN number one the online database to ensure that the car was not stolen, damaged or illegally modified. The VIN number has a specific format that is globally recognized. This format was implemented by the ISO institute. Every car manufacturer is obliged to mark all its vehicles in this special format. This online service allows a user to check the validity of the car and get detailed information on almost any VIN number, search car parts and check the car's history. The VIN also allows a user to check the market value of a new or used car.                                  
-                   </p>
-                  </div>
-         </div>
-      </div>
-      <hr>
-      <div class="container">
-          <div class="row">          
-                 <div class="col-sm-8">                
-                 <h2>We support the following makers:</h2>
-                 <br/>
-                       <div align="center">
-                                                                      
-                               <a style="font-size:18px;" href="/EN/Acura">Acura</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Alfa%20Romeo">Alfa Romeo</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Aston%20Martin">Aston Martin</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Audi">Audi</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Alpina">Alpina</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/BAW">BAW</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Bentley">Bentley</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Brilliance">Brilliance</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/BMW">BMW</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Buick">Buick</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Bugatti">Bugatti</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/BYD">BYD</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Cadillac">Cadillac</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Can-Am">Can-Am</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Chery">Chery</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Chevrolet">Chevrolet</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Chrysler">Chrysler</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Citroen">Citroen</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Dacia">Dacia</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Daewoo">Daewoo</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/DAF">DAF</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Daihatsu">Daihatsu</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Daimler">Daimler</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Dodge">Dodge</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Ducati">Ducati</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Ferrari">Ferrari</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Fiat">Fiat</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Ford">Ford</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Gaz">Gaz</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/GMC">GMC</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Geely">Geely</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Great%20Wall">Great Wall</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Harley%20Davidson">Harley Davidson</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Hafei">Hafei</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Haima">Haima</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Honda">Honda</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Holden">Holden</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Hummer">Hummer</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Hyundai">Hyundai</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Infiniti">Infiniti</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Isuzu">Isuzu</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Iveco">Iveco</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Jaguar">Jaguar</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Jeep">Jeep</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Kenworth">Kenworth</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Kia">Kia</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/KTM">KTM</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lada">Lada</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lamborghini">Lamborghini</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lancia">Lancia</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Land%20Rover">Land Rover</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lotus">Lotus</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lexus">Lexus</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lifan">Lifan</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Lincoln">Lincoln</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mack">Mack</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/MAN">MAN</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Maserati">Maserati</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mercury">Mercury</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/McLaren">McLaren</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mazda">Mazda</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mercedes-Benz">Mercedes-Benz</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/MG">MG</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mini">Mini</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Mitsubishi">Mitsubishi</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Nissan">Nissan</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Opel">Opel</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Oldsmobile">Oldsmobile</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Peterbilt">Peterbilt</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Plymouth">Plymouth</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Peugeot">Peugeot</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Pontiac">Pontiac</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Porsche">Porsche</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/RAM">RAM</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Renault">Renault</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Rolls-Royce">Rolls-Royce</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Rover">Rover</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Saturn">Saturn</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Saab">Saab</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Scion">Scion</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Scania">Scania</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Seat">Seat</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Skoda">Skoda</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Smart">Smart</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/SsangYong">SsangYong</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Subaru">Subaru</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Suzuki">Suzuki</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Tata">Tata</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Tesla">Tesla</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Vauxhall">Vauxhall</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Toyota">Toyota</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Volvo">Volvo</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Winnebago">Winnebago</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Yamaha">Yamaha</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Freightliner">Freightliner</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Kawasaki">Kawasaki</a>   
-									  					 &emsp;&emsp;
-                    		                                              
-                               <a style="font-size:18px;" href="/EN/Volkswagen">Volkswagen</a>   
-									  					 &emsp;&emsp;
-                    		    												 	</div> 
-                    <br/>              
-                    </div>
-                  <div class="col-sm-4">
-                    <br/> 
-                      <div class="card border-light">
-<div class="card-header">Recently Found VIN's:</div>
-<ul class="list-group list-group-flush">
-            	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="just now" href="/EN/check-lookup/LVVDB21B6NE002004">LVVDB21B6NE002004</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="1 second ago" href="/EN/check-lookup/2S3DA417386112765">2S3DA417386112765</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="3 seconds ago" href="/EN/check-lookup/JMZBK14Z241138577">JMZBK14Z241138577</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="9 seconds ago" href="/EN/check-lookup/WDDDJ7HB1AA166227">WDDDJ7HB1AA166227</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="11 seconds ago" href="/EN/check-lookup/WDB1260441A409883">WDB1260441A409883</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="14 seconds ago" href="/EN/check-lookup/1C3CDWCA5CD522200">1C3CDWCA5CD522200</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="14 seconds ago" href="/EN/check-lookup/WBAGN63575D000000">WBAGN63575D000000</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="18 seconds ago" href="/EN/check-lookup/9FSN64BD2MC325040">9FSN64BD2MC325040</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="27 seconds ago" href="/EN/check-lookup/KNAFD4110D5788770">KNAFD4110D5788770</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="28 seconds ago" href="/EN/check-lookup/1G1FJ1R65J0126255">1G1FJ1R65J0126255</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="29 seconds ago" href="/EN/check-lookup/3MDDJ6HD60M420155">3MDDJ6HD60M420155</a></li>
-              	
-							<li class="list-group-item list-group-flush"><a data-toggle="tooltip" title="29 seconds ago" href="/EN/check-lookup/WDDGF4HB6DA782773">WDDGF4HB6DA782773</a></li>
-              						
-</ul>
-</div> 
-												                                       
-                              <br/> 
-                  </div>
-                </div>
-      </div>
-      <hr>
-      <div class="container">
-        <div class="row">
-          <div class="col-sm">
-           <br/>  
-                 <h3>What is structure of Vehicle Identification Number?</h3> 
-								 <table class="table table-striped table-hover">
-                   <tr>              				
-										 <td>Position 1</td><td><a title="WMI"><span style="font-size:14px;" class="badge badge-success"><b>1</b></span></a></td>
-                     <td>Shows where the vehicle was built (1 - means United States) </td>                    
-                   </tr>    
-                   <tr>
-                      <td>2-3</td>
-									 	  <td><a title="WMI"><span style="font-size:14px;" class="badge badge-secondary"><b>FT</b></span></a></td> 
-                      <td>Designated the vehicle manufacturer (F - means Ford Inc.)</td>                  
-                   </tr>
-									 <tr>
-									  	<td>4-8</td>
-                      <td><a title="VDS"><span style="font-size:14px;" class="badge badge-info"><b>GHDLZ</b></span></a></td>  
-                      <td>Denotes the vehicle's brand, engine size, and type</td>    
-                   </tr>    
-                   <tr>
-                      <td>9</td>
-                      <td><a title="VSC"><span style="font-size:14px;" class="badge badge-danger"><b>B</b></span></a></td>
-                      <td>Vehicle Security Code</td>
-                    </tr>    
-                   <tr>
-                      <td>10</td>
-                    	<td><a title="MY" ><span style="font-size:14px;" class="badge badge-success"><b>G</b></span></a></td> 
-                      <td>Shows Vehicle Year</td>
-                   </tr>    
-                   <tr>                    
-                      <td>11</td>
-										  <td><a title="VIS"><span style="font-size:14px;" class="badge badge-warning"><b>K</b></span></a></td> 
-                      <td>Indicates which plant assembled the vehicle</td>
-                   </tr>  
-                   <tr>
-                     <td>12-17</td> 
-                     <td><a title="VIS"><span style="font-size:14px;" class="badge badge-dark"><b>456923</b></span></a></td> 
-                     <td> Displays the serial number of the vehicle</td>  
-                   </tr>    
-								</table>
-            <br/>     
-            <br/>
-            The scheme below depicts a reference vehicle ID structure. Please notice that vehicles manufactured before 1981 may have less symbols than today's ISO standard VIN consisting of 17 characters.   
-            <div class="center">             
-            <img alt="VIN chart - a reference VIN structure" title="VIN chart" class="one" src="/images/vin-chart.jpg"></div>
-            <br/>
-          </div>
-          <div class="col-sm center">
-            			<br/>	
-                  <h3>What vehicle history report may show?</h3>              
-                  A typical car identifier consists of a 17-digit code. The code is divided into several sections having specific meaning. 
-                  That unique ID allows to distinguish one vehicle from another. 
-									The ID may encode such parameters like maker, factory, model, engine, trim and color. There are no vehicles that have the same codes.
-									Manufacturers strictly pursuing ISO standards assign VIN permanently
-									to each new vehicle coming from a production line and recorded in databases maintained by car manufacturers and government agencies like NHTSA and DMV. 		
-									Buyers are not willing to get cheated while acquiring used vehicle and that is the main reason why they want to decode vehicle id number. Decoding the code may help to know the following:
-									<ul>
-                    <li><h4>Ownership history</h4> A number of vehicle owners, duration of ownership, registration details, city and state of registration.<br/><br/></li>
-                    <li><h4>Technical checklist</h4> Shows possible problems, ranging from salvage/reconstruction to Lemon check.<br/><br/></li>
-                    <li><h4>Sale history</h4> Shows records related to vehicle loan/sale events including issuing financial institution.<br/><br/></li>
-                    <li><h4>Accident history</h4> A list of accidents reported with exact dates and possible severity of damages incurred.<br/><br/></li>
-                    <li><h4>Recall history</h4> Shows if vehicle has any pending or existed <a href="https://www.vindecoderz.com/EN/car-problems-recalls-complaints">recalls</a>. Recalls can include important safety related issues and defects that can affect vehicle operation.<br/></li>
-								  </ul>
-	              <span class="center">Needless to say, all these aspects play a significant role in consumers protection. Do not hesitate to use our VIN lookup service. What Vehicle History Report (or VHR) does contain? Here's a list of possible features: title problems, accidents, total loss, flood damage,
-								odometer status, dealer service records, frame damage, airbag deployment, vehicle registration, recalls and more.</span>
-								<br/>
-              	<div id="track">													
-						      <br/>
-                  <i class="fa fa-star" style="color:orange"></i>	
-                  <i class="fa fa-star" style="color:orange"></i>	
-                  <i class="fa fa-star" style="color:orange"></i>	
-                  <i class="fa fa-star" style="color:orange"></i>	
-                 <i class="fas fa-star-half-alt" style="color:orange"></i>	
-					      </div>					
-                <div>
-                  Rating:
-                  <span>
-                  <span>4.7</span> from <span>5</span>
-                  (<span>3783</span> reviews)
-                  </span>
-                </div>
-              </div>     
-        </div>  
-	      <div class="container">
-          <div class="row">          
-                 <div class="col-sm">
-                 <br/>
-			           <ul>									
-                    <li><strong>What is VDS?</strong> VDS is a Vehicle Descriptor Section. VDS is used to specify a type of vehicle and may include information about the model, platform, engine and transmission.</li>
-                    <li><strong>What is VIN?</strong> VIN is a Vehicle Identification Number</li>
-                    <li><strong>What is VIS?</strong> VIS is a Vehicle Identifier Section</li>
-                    <li><strong>What is WMI?</strong> WMI is a World Manufacturer Identifier. The first three symbols identify the manufacturer of the car.</li>
-                 </ul>	
-                 <br/>
-                 </div>          
-                 <div class="col-sm">
-                   <br/>
-                    <br><br>
-                    <a title="NHTSA.gov"><img title="NHTSA.gov" alt="NHTSA.gov" src="/images/NHTSA-logo.jpg"/></a>	
-                    &nbsp;&nbsp;&nbsp;<a title="Safercar.gov"><img title="Safercar.gov" alt="Safercar.gov" src="/images/SaferCar.gov-logo.jpg"/></a>
-                    &nbsp;&nbsp;&nbsp;<a title="NMVTIS.gov"><img title="NMVTIS.gov" alt="Safercar.gov" src="/images/NMVTIS-logo.jpg"/></a>
-                   <br/> 		        
-                 </div>
-         </div>
-		</div>
-						
-	        <div class="txtright"><i class="fa fa-arrow-up"></i> <a href="#top">Top</a></div>
-        <hr>      
-      </div> 
-    </main>
-		    <script type="application/ld+json">{
-					"@context": "http://schema.org",
-					"@type": "WebApplication",
-					"url": "https://www.vindecoderz.com/",
-					"name": "Free VIN Decoder and Lookup",
-					"applicationCategory": "EducationalApplication",
-					"operatingSystem": "All",
-					"aggregateRating": {
-							"@type": "AggregateRating",
-							"bestRating": 5,
-							"ratingCount": 735,
-							"ratingValue": 4.63
-					},
-					"offers": {
-							"@type": "Offer",
-							"url": "https://www.vindecoderz.com/",
-							"price": "0.00",
-							"priceCurrency": "USD"
-					}
-			}</script>
-      <footer class="container">
-      <br/><small>2021 &copy; <a title="VINDecoderZ" href="/">VINDecoderZ.com</a> is a free universal VIN decoder. Designed and executed by GW Ltd. All rights reserved. 
-     Please notice that we do not take responsibility for inaccurate or incomplete results. All trademarks, trade names,  service marks, product names and logos appearing on the site are the property of their respective owners.</small>
-      <br/><br/>
-    </footer>
-     <script src="/js/4.1.1/jquery-3.3.1.slim.min.js" type="4407e6eb8f2967db5dc21299-text/javascript"></script>
-     <script src="/js/4.1.1/popper.min.js" type="4407e6eb8f2967db5dc21299-text/javascript"></script> 
-     <script src="/js/4.1.1/bootstrap.min.js" type="4407e6eb8f2967db5dc21299-text/javascript"></script>
-    <script type="4407e6eb8f2967db5dc21299-text/javascript">
-$(document).ready(function() {
-    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
-});
-    </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-4640919-5" type="4407e6eb8f2967db5dc21299-text/javascript"></script>
-<script type="4407e6eb8f2967db5dc21299-text/javascript">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'UA-4640919-5');
-</script>
-			  <script src="https://ajax.cloudflare.com/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="4407e6eb8f2967db5dc21299-|49" defer=""></script></body>
-</html>
+      <div class="alert alert-danger" role="alert" id="msg2">
+        </div>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  
+  </body>
+  </html>
