@@ -6,9 +6,8 @@ const fetchData = position =>
     const url = "https://www.metaweather.com/api/location/search/?lattlong="
    
     fetch(`${url}${latitude},${longitude}`)
-    .then(Response => console.log(Response.url))
-    .then(data => console.log(data))
-    .then(URL => console.log(data))
+    .then(res => res.json())
+    .then(data => console.log(data));
         
         
 
